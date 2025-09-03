@@ -1,9 +1,11 @@
-import { CustomFilter, Hero, SearchBar } from "@/components";
+import { CarCard, CustomFilter, Hero, SearchBar } from "@/components";
 import { fetchCars } from "@/utils";
+import { mockCars } from "@/constants/mockCars";
 import Image from "next/image";
 
-export default async function Home() {
-  const allCars = await fetchCars();
+export default function Home() {
+  // const allCars = await fetchCars();
+  const allCars = mockCars;
   console.log(allCars);
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
   return (
@@ -24,7 +26,17 @@ export default async function Home() {
           </div>
         </div>
         {!isDataEmpty ? (
-          <section> WE HAVE CARS</section>
+          <section>
+            {" "}
+            <div className="home__cars-wrapper">
+              {allCars?.map((car) => (
+                <CarCard
+                  key={`${car.make}-${car.model}-${car.year}`}
+                  car={car}
+                />
+              ))}
+            </div>
+          </section>
         ) : (
           <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">Oops, no results</h2>
