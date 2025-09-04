@@ -1,33 +1,35 @@
-import { CarCard, CustomFilter, Hero, SearchBar } from "@/components";
+import { CarCard, CustomFilter, Hero, SearchBar, ShowMore } from "@/components";
 import { fetchCars } from "@/utils";
-import { mockCars } from "@/constants/mockCars";
-import Image from "next/image";
 import { fuels, yearsOfProduction } from "@/constants";
+import Image from "next/image";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
+  const params = await searchParams; // ✅ await searchParams
+
   const allCars = await fetchCars({
-    manufacturer: searchParams?.manufacturer || "",
-    year: searchParams?.year ? Number(searchParams.year) : 0,
-    fuel: searchParams?.fuel || "",
-    limit: searchParams?.limit ? Number(searchParams.limit) : 10,
-    model: searchParams?.model || "",
+    manufacturer: params?.manufacturer || "",
+    year: params?.year ? Number(params.year) : 0,
+    fuel: params?.fuel || "",
+    limit: params?.limit ? Number(params.limit) : 10,
+    model: params?.model || "",
   });
 
-  console.log(allCars);
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+
   return (
     <main className="overflow-hidden">
       <Hero />
 
       <div className="mt-12 padding-x padding-y max-width" id="discover">
         <div className="home__text-container">
-          <h1 className="text-4xl font-extrabold ">Car Catalog</h1>
+          <h1 className="text-4xl font-extrabold">Car Catalog</h1>
           <p>Explore the cars you might like</p>
         </div>
+
         <div className="home__filters">
           <SearchBar />
 
@@ -36,17 +38,22 @@ export default async function Home({
             <CustomFilter title="year" options={yearsOfProduction} />
           </div>
         </div>
+
         {!isDataEmpty ? (
           <section>
-            {" "}
             <div className="home__cars-wrapper">
-              {allCars?.map((car) => (
+              {allCars.map((car) => (
                 <CarCard
                   key={`${car.make}-${car.model}-${car.year}`}
                   car={car}
                 />
               ))}
             </div>
+
+            <ShowMore
+              pageNumber={(Number(params.pageNumber) || 10) / 10}
+              isNext={(Number(params.limit) || 10) > allCars.length}
+            />
           </section>
         ) : (
           <div className="home__error-container">
