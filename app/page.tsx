@@ -1,3 +1,4 @@
+"use client";
 import { CarCard, CustomFilter, Hero, SearchBar, ShowMore } from "@/components";
 import { fetchCars } from "@/utils";
 import { fuels, yearsOfProduction } from "@/constants";
@@ -8,7 +9,7 @@ export default async function Home({
 }: {
   searchParams: Promise<{ [key: string]: string }>;
 }) {
-  const params = await searchParams; // ✅ await searchParams
+  const params = await searchParams;
 
   const allCars = await fetchCars({
     manufacturer: params?.manufacturer || "",
