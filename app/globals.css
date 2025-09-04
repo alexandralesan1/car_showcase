@@ -9,6 +9,7 @@
   --light-white: rgba(59, 60, 152, 0.03);
   --light-white-100: rgba(59, 60, 152, 0.02);
   --grey: #747a88;
+  --primary-light-blue: #2b59ff;
 }
 
 * {
@@ -45,9 +46,19 @@
 .bg-primary-blue-100 {
   background-color: var(--primary-blue-100);
 }
+.bg-primary-blue {
+  background-color: var(--primary-blue);
+}
 
+.bg-primary-blue-500 {
+  background-color: var(--color-blue-500);
+}
 .bg-light-white {
   background-color: var(--light-white);
+}
+
+.bg-white {
+  background-color: var(--color-white);
 }
 
 .text-grey {
@@ -362,8 +373,12 @@
   background-color: var(--primary-blue);
 }
 
+.bg-primary-light-blue {
+  @apply flex flex-row justify-center items-center py-3 px-6 text-white rounded-full mt-10;
+  background-color: var(--primary-light-blue);
+}
 .footer-container {
   max-width: 1200px;
-  margin: 24px auto; /* sus și jos 24px, stânga și dreapta auto centrat */
-  padding: 24px; /* padding uniform pe toate părțile */
+  margin: 24px auto;
+  padding: 24px;
 }
