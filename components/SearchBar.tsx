@@ -24,13 +24,10 @@ const SearchBar = () => {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (manufacturer === "" && model === "") {
-      alert("Please fill in the search bar");
-      return;
+    if (manufacturer.trim() === "" && model.trim() === "") {
+      return alert("Please fill in the search bar");
     }
     updateSearchParams(model.toLowerCase(), manufacturer.toLowerCase());
-
-    console.log("Searching:", { manufacturer, model });
   };
 
   const updateSearchParams = (model: string, manufacturer: string) => {
@@ -58,7 +55,7 @@ const SearchBar = () => {
       <div className="searchbar__item">
         <SearchManufacturer
           manufacturer={manufacturer}
-          setManufactureer={setManufacturer} // corectat typo
+          setManuFacturer={setManufacturer}
         />
         <SearchButton otherClasses="sm:hidden" />
       </div>
@@ -68,7 +65,7 @@ const SearchBar = () => {
           src="/model-icon.png"
           width={25}
           height={25}
-          alt="model icon"
+          alt="car model"
           className="absolute w-[20px] h-[20px] ml-4"
         />
         <input
@@ -76,7 +73,7 @@ const SearchBar = () => {
           name="model"
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          placeholder="Tiguan"
+          placeholder="Tiguan..."
           className="searchbar__input"
         />
         <SearchButton otherClasses="sm:hidden" />

@@ -3,20 +3,15 @@ import { CarCard, CustomFilter, Hero, SearchBar, ShowMore } from "@/components";
 import { fetchCars } from "@/utils";
 import { fuels, yearsOfProduction } from "@/constants";
 import Image from "next/image";
+import { HomeProps } from "@/types";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string }>;
-}) {
-  const params = await searchParams;
-
+export default async function Home({ searchParams }: HomeProps) {
   const allCars = await fetchCars({
-    manufacturer: params?.manufacturer || "",
-    year: params?.year ? Number(params.year) : 0,
-    fuel: params?.fuel || "",
-    limit: params?.limit ? Number(params.limit) : 10,
-    model: params?.model || "",
+    manufacturer: searchParams.manufacturer || "",
+    year: searchParams.year || 2022,
+    fuel: searchParams.fuel || "",
+    limit: searchParams.limit || 10,
+    model: searchParams.model || "",
   });
 
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
@@ -43,17 +38,14 @@ export default async function Home({
         {!isDataEmpty ? (
           <section>
             <div className="home__cars-wrapper">
-              {allCars.map((car) => (
-                <CarCard
-                  key={`${car.make}-${car.model}-${car.year}`}
-                  car={car}
-                />
+              {allCars?.map((car) => (
+                <CarCard car={car} />
               ))}
             </div>
 
             <ShowMore
-              pageNumber={(Number(params.pageNumber) || 10) / 10}
-              isNext={(Number(params.limit) || 10) > allCars.length}
+              pageNumber={(Number(searchParams.limit) || 10) / 10}
+              isNext={(Number(searchParams.limit) || 10) > allCars.length}
             />
           </section>
         ) : (
