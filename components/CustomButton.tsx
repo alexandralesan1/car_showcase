@@ -1,7 +1,8 @@
 "use client";
 
-import { CustomButtonProps } from "@/types";
 import Image from "next/image";
+
+import { CustomButtonProps } from "@/types";
 
 const Button = ({
   isDisabled,
@@ -15,7 +16,7 @@ const Button = ({
   <button
     disabled={isDisabled}
     type={btnType || "button"}
-    className={`bg-primary-light-blue ${containerStyles}`}
+    className={`custom-btn ${containerStyles}`}
     onClick={handleClick}
   >
     <span className={`flex-1 ${textStyles}`}>{title}</span>

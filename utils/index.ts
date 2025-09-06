@@ -1,69 +1,64 @@
 import { CarProps, FilterProps } from "@/types";
 
 export const calculateCarRent = (city_mpg: number, year: number) => {
-  const basePricePerDay = 50; // Base rental price per day in dollars
-  const mileageFactor = 0.1; // Additional rate per mile driven
-  const ageFactor = 0.05; // Additional rate per year of vehicle age
+  const basePricePerDay = 50;
+  const mileageFactor = 0.1;
+  const ageFactor = 0.05;
 
-  // Calculate additional rate based on mileage and age
   const mileageRate = city_mpg * mileageFactor;
   const ageRate = (new Date().getFullYear() - year) * ageFactor;
 
-  // Calculate total rental rate per day
   const rentalRatePerDay = basePricePerDay + mileageRate + ageRate;
 
   return rentalRatePerDay.toFixed(0);
 };
 
 export const updateSearchParams = (type: string, value: string) => {
-  // Get the current URL search params
   const searchParams = new URLSearchParams(window.location.search);
-
-  // Set the specified search parameter to the given value
   searchParams.set(type, value);
-
-  // Set the specified search parameter to the given value
   const newPathname = `${window.location.pathname}?${searchParams.toString()}`;
-
   return newPathname;
 };
 
 export const deleteSearchParams = (type: string) => {
-  // Set the specified search parameter to the given value
   const newSearchParams = new URLSearchParams(window.location.search);
-
-  // Delete the specified search parameter
   newSearchParams.delete(type.toLocaleLowerCase());
-
-  // Construct the updated URL pathname with the deleted search parameter
   const newPathname = `${
     window.location.pathname
   }?${newSearchParams.toString()}`;
-
   return newPathname;
 };
 
+// ✅ Cache global pentru rezultate API
+const fetchCache: { [key: string]: Promise<any> } = {};
+
 export async function fetchCars(filters: FilterProps) {
   const { manufacturer, year, model, limit, fuel } = filters;
+  const cacheKey = `${manufacturer}-${year}-${model}-${limit}-${fuel}`;
 
-  // Set the required headers for the API request
+  // Dacă avem deja o promisiune în cache, returnăm aceea (previne multiple fetch-uri simultane)
+  if (fetchCache[cacheKey]) {
+    return fetchCache[cacheKey];
+  }
+
   const headers: HeadersInit = {
-    "X-RapidAPI-Key": "d034d17f65mshed5a2d930442816p18bc98jsn55351e0d4644",
+    "X-RapidAPI-Key": "01c70ea2e1msh0531e784aea73b8p1ce4d2jsnc413b6c636ed",
     "X-RapidAPI-Host": "cars-by-api-ninjas.p.rapidapi.com",
   };
 
-  // Set the required headers for the API request
-  const response = await fetch(
-    `https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?make=${manufacturer}&year=${year}&model=${model}&limit=${limit}&fuel_type=${fuel}`,
-    {
-      headers: headers,
-    }
-  );
+  // Salvăm promisiunea în cache chiar înainte de fetch
+  const fetchPromise = fetch(
+    `https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?model=corolla`,
+    { headers }
+  )
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error("Error fetching cars:", err);
+      return [];
+    });
 
-  // Parse the response as JSON
-  const result = await response.json();
-
-  return result;
+  fetchCache[cacheKey] = fetchPromise;
+  return fetchPromise;
 }
 
 export const generateCarImageUrl = (car: CarProps, angle?: string) => {
@@ -78,7 +73,6 @@ export const generateCarImageUrl = (car: CarProps, angle?: string) => {
   url.searchParams.append("modelFamily", model.split(" ")[0]);
   url.searchParams.append("zoomType", "fullscreen");
   url.searchParams.append("modelYear", `${year}`);
-  // url.searchParams.append('zoomLevel', zoomLevel);
   url.searchParams.append("angle", `${angle}`);
 
   return `${url}`;
