@@ -1,10 +1,8 @@
 "use client";
-
 import { Fragment, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Listbox, Transition } from "@headlessui/react";
-
 import { CustomFilterProps } from "@/types";
 import { updateSearchParams } from "@/utils";
 
@@ -12,10 +10,14 @@ export default function CustomFilter({ title, options }: CustomFilterProps) {
   const router = useRouter();
   const [selected, setSelected] = useState(options[0]);
 
-  // ✅ Added: useEffect to handle router.push only after selected changes, preventing infinite requests
   useEffect(() => {
     if (!selected) return;
-    const newPathName = updateSearchParams(title, selected.value.toLowerCase());
+
+    // ✅ Folosim value goale ca sa stearga parametru daca e selectat "Year" sau "Fuel"
+    const newPathName = updateSearchParams(
+      title.toLowerCase(),
+      selected.value || ""
+    );
     router.push(newPathName);
   }, [selected]);
 
@@ -33,6 +35,7 @@ export default function CustomFilter({ title, options }: CustomFilterProps) {
               alt="chevron_up-down"
             />
           </Listbox.Button>
+
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"

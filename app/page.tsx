@@ -1,28 +1,22 @@
 "use client";
-import {
-  CarCard,
-  CustomFilter,
-  Hero,
-  SearchBar,
-  ShowMore,
-  TestFilter,
-} from "@/components";
+import { CarCard, CustomFilter, Hero, SearchBar, ShowMore } from "@/components";
 import { fetchCars } from "@/utils";
 import { fuels, yearsOfProduction } from "@/constants";
-import Image from "next/image";
 import { HomeProps } from "@/types";
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
+
+  // ✅ Modificare: toate field-urile sunt opționale
   const allCars = await fetchCars({
     manufacturer: params.manufacturer || "",
-    year: Number(params.year) || 2022,
+    year: params.year ? Number(params.year) : undefined,
     fuel: params.fuel || "",
-    limit: Number(params.limit) || 10,
+    limit: params.limit ? Number(params.limit) : 10,
     model: params.model || "",
   });
 
-  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1;
 
   return (
     <main className="overflow-hidden">
@@ -46,20 +40,22 @@ export default async function Home({ searchParams }: HomeProps) {
         {!isDataEmpty ? (
           <section>
             <div className="home__cars-wrapper">
-              {allCars?.map((car) => (
-                <CarCard car={car} />
+              {allCars.map((car) => (
+                <CarCard
+                  key={`${car.make}-${car.model}-${car.year}`}
+                  car={car}
+                />
               ))}
             </div>
 
             <ShowMore
-              pageNumber={(Number(searchParams.limit) || 10) / 10}
-              isNext={(Number(searchParams.limit) || 10) > allCars.length}
+              pageNumber={(Number(params.limit) || 10) / 10}
+              isNext={(Number(params.limit) || 10) > allCars.length}
             />
           </section>
         ) : (
           <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">Oops, no results</h2>
-            <p>{allCars?.message}</p>
           </div>
         )}
       </div>

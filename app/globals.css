@@ -405,3 +405,7 @@
   display: flex;
   gap: 2rem; /* spațiu între linkuri */
 }
+
+.spacer {
+  width: 20%;
+}

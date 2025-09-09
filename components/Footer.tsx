@@ -9,6 +9,7 @@ const Footer = () => (
       {/* Logo și descriere */}
       <div className="spacer ">
         <div className="flex flex-col justify-start items-start gap-6">
+          <div className="spacer"></div>
           <Image
             src="/logo.svg"
             alt="logo"
